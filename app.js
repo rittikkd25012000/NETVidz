@@ -1,8 +1,7 @@
-// Global elements
+// Global Elements
 const videoPlayer = document.getElementById('mediaPlayer');
-const audioPlayer = document.getElementById('audioPlayer');
 
-// Media configuration
+// Simple Config
 const config = {
   channels: [
     {
@@ -17,39 +16,20 @@ const config = {
           title: "Late Night with The Devil",
           poster: "https://drive.google.com/uc?export=view&id=1VJaF_F4NLBKD3_pFRMr8yka1LnWLW0gT",
           url: "https://drive.google.com/uc?export=view&id=1vXI194Mmk-I8F3e2hoLt1D3gBYfZLnjn"
-        },
-        {
-          title: "Companion",
-          poster: "https://drive.google.com/uc?export=view&id=1O5pZ7Zyn0jmVPRdFiXSoE2xW5WeFVMZY",
-          url: "https://drive.google.com/uc?export=view&id=1yyN9T-dk0g4IgbuBqE6M7d90nL6Yy4k2"
-        }
-      ]
-    },
-    {
-      name: "Music",
-      media: [
-        {
-          title: "Song 1",
-          poster: "LINK_TO_POSTER_IMAGE_IN_DRIVE",
-          url: "https://drive.google.com/uc?export=view&id=YOUR_SONG1_ID"
         }
       ]
     }
   ]
 };
 
-// Build the interface
+// Build Interface
 function buildUI() {
   const channelsDiv = document.getElementById("channels");
   
   config.channels.forEach(channel => {
-    const mediaHTML = channel.media.map(media => `
-      <div class="media-item" 
-           onclick="playMedia('${media.url}', '${media.title.replace(/'/g, "\\'")}')"
-           data-title="${media.title}">
-        <img src="${media.poster}" 
-             alt="${media.title}" 
-             loading="lazy">
+    const mediaHTML = channel.media.map(item => `
+      <div class="media-item" onclick="playMovie('${item.url}')">
+        <img src="${item.poster}" alt="${item.title}">
       </div>
     `).join('');
     
@@ -62,41 +42,21 @@ function buildUI() {
   });
 }
 
-// Play media function
-function playMedia(originalUrl, title) {
+// Play Function with CORS Fix
+function playMovie(url) {
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
   const modal = document.getElementById("playerModal");
-  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`;
-
-  // Reset players
-  videoPlayer.pause();
-  audioPlayer.pause();
-  videoPlayer.src = '';
-  audioPlayer.src = '';
-
+  
+  videoPlayer.src = proxyUrl;
   modal.style.display = "block";
-  document.title = `${title} | rittik'z NETVidz`;
-
-  if (proxyUrl.includes('/file/d/')) {
-    videoPlayer.src = proxyUrl;
-    videoPlayer.type = 'video/mp4';
-    videoPlayer.style.display = 'block';
-    audioPlayer.style.display = 'none';
-    videoPlayer.play().catch(error => console.log('Video play failed:', error));
-  } else {
-    audioPlayer.src = proxyUrl;
-    audioPlayer.style.display = 'block';
-    videoPlayer.style.display = 'none';
-    audioPlayer.play().catch(error => console.log('Audio play failed:', error));
-  }
+  videoPlayer.play();
 }
 
-// Close modal
-document.querySelector('.close').addEventListener('click', () => {
-  document.getElementById('playerModal').style.display = 'none';
+// Close Modal
+document.querySelector(".close").onclick = () => {
+  document.getElementById("playerModal").style.display = "none";
   videoPlayer.pause();
-  audioPlayer.pause();
-  document.title = "rittik'z NETVidz";
-});
+};
 
-// Start the app
-document.addEventListener('DOMContentLoaded', buildUI);
+// Start App
+document.addEventListener("DOMContentLoaded", buildUI);
