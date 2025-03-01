@@ -1,4 +1,8 @@
-// Replace with your Google Drive links
+// Global Elements
+const videoPlayer = document.getElementById("mediaPlayer");
+const audioPlayer = document.getElementById("audioPlayer");
+
+// Media Configuration
 const config = {
   channels: [
     {
@@ -8,9 +12,13 @@ const config = {
           title: "Companion",
           poster: "https://drive.google.com/uc?export=download&id=1nBPJxt-mE4sNVEOIFHBDOvVsQv5GVtIf",
           url: "https://drive.google.com/uc?export=download&id=15fkSC56kVJ6F4ismAHkVcXeoUY8N7LqF"
+        },
+        {
           title: "Late Night with The Devil",
           poster: "https://drive.google.com/uc?export=download&id=1VJaF_F4NLBKD3_pFRMr8yka1LnWLW0gT",
           url: "https://drive.google.com/uc?export=download&id=1vXI194Mmk-I8F3e2hoLt1D3gBYfZLnjn"
+        },
+        {
           title: "Companion",
           poster: "https://drive.google.com/uc?export=download&id=1O5pZ7Zyn0jmVPRdFiXSoE2xW5WeFVMZY",
           url: "https://drive.google.com/uc?export=download&id=1yyN9T-dk0g4IgbuBqE6M7d90nL6Yy4k2"
@@ -30,36 +38,40 @@ const config = {
   ]
 };
 
-// Build the UI
+// UI Builder
 function buildUI() {
   const channelsDiv = document.getElementById("channels");
-
+  
   config.channels.forEach(channel => {
-    const channelHTML = `
+    const mediaItems = channel.media.map(media => `
+      <div class="media-item" 
+           onclick="playMedia('${media.url.replace(/'/g, "\\'")}', '${media.title.replace(/'/g, "\\'")}')"
+           data-title="${media.title}">
+        <img src="${media.poster}" alt="${media.title}" loading="lazy">
+      </div>
+    `).join("");
+
+    channelsDiv.innerHTML += `
       <div class="channel">
         <h2>${channel.name}</h2>
         <div class="media-grid">
-          ${channel.media.map(media => `
-            <div class="media-item" onclick="playMedia('${media.url}', '${media.title}')">
-              <img src="${media.poster}" alt="${media.title}">
-            </div>
-          `).join("")}
+          ${mediaItems}
         </div>
       </div>
     `;
-    channelsDiv.innerHTML += channelHTML;
   });
 }
 
-// Play media
+// Media Controller
 function playMedia(url, title) {
   const modal = document.getElementById("playerModal");
-  const videoPlayer = document.getElementById("mediaPlayer");
-  const audioPlayer = document.getElementById("audioPlayer");
-
   modal.style.display = "block";
 
-  if (url.includes(".mp4")) {
+  // Reset players
+  videoPlayer.pause();
+  audioPlayer.pause();
+
+  if (url.includes("/file/d/")) {
     videoPlayer.src = url;
     videoPlayer.style.display = "block";
     audioPlayer.style.display = "none";
@@ -70,14 +82,22 @@ function playMedia(url, title) {
     videoPlayer.style.display = "none";
     audioPlayer.play();
   }
+
+  // Update document title
+  document.title = `${title} - StreamFlix`;
 }
 
-// Close modal
-document.querySelector(".close").onclick = () => {
+// Modal Controls
+document.querySelector(".close").addEventListener("click", () => {
   document.getElementById("playerModal").style.display = "none";
   videoPlayer.pause();
   audioPlayer.pause();
-};
+  document.title = "StreamFlix"; // Reset title
+});
 
 // Initialize
-buildUI();
+document.addEventListener("DOMContentLoaded", () => {
+  buildUI();
+  // Preload first media poster for better UX
+  new Image().src = config.channels[0].media[0].poster;
+});
