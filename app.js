@@ -2,7 +2,7 @@
 const videoPlayer = document.getElementById('mediaPlayer');
 const audioPlayer = document.getElementById('audioPlayer');
 
-// Updated config with proper syntax
+// Media configuration
 const config = {
   channels: [
     {
@@ -38,7 +38,7 @@ const config = {
   ]
 };
 
-// Build UI with CORS proxy
+// Build the interface
 function buildUI() {
   const channelsDiv = document.getElementById("channels");
   
@@ -62,7 +62,7 @@ function buildUI() {
   });
 }
 
-// Updated playMedia with CORS proxy
+// Play media function
 function playMedia(originalUrl, title) {
   const modal = document.getElementById("playerModal");
   const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`;
@@ -74,7 +74,8 @@ function playMedia(originalUrl, title) {
   audioPlayer.src = '';
 
   modal.style.display = "block";
-  
+  document.title = `${title} | rittik'z NETVidz`;
+
   if (proxyUrl.includes('/file/d/')) {
     videoPlayer.src = proxyUrl;
     videoPlayer.type = 'video/mp4';
@@ -89,12 +90,13 @@ function playMedia(originalUrl, title) {
   }
 }
 
-// Modal controls
+// Close modal
 document.querySelector('.close').addEventListener('click', () => {
   document.getElementById('playerModal').style.display = 'none';
   videoPlayer.pause();
   audioPlayer.pause();
+  document.title = "rittik'z NETVidz";
 });
 
-// Initialize
+// Start the app
 document.addEventListener('DOMContentLoaded', buildUI);
