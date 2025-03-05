@@ -1,0 +1,15 @@
+{
+    "name": "rittikznetvidz",
+    "version": "1.0.0",
+    "description": "A small movie streaming app with advanced UI built using Firebase and Bootstrap.",
+    "main": "public/js/app.js",
+    "scripts": {
+      "start": "live-server public"
+    },
+    "dependencies": {
+      "firebase": "^9.0.0"
+    },
+    "author": "Your Name",
+    "license": "MIT"
+  }
+  
